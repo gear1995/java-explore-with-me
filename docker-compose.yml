@@ -1,10 +1,14 @@
 services:
   stats-server:
+    image: stats-server
+    container_name: stats-server
     ports:
       - "9090:9090"
+    environment:
+      - EXPLORE_WITH_ME_STAT_URL=http://server:9090
 
-  stats-db:
-    image: postgres:16.1
+#  stats-db:
+#    image: postgres:16.1
 
 #  ewm-service:
 #    ports:
