@@ -12,9 +12,9 @@
 
 	<name>Explore With Me</name>
 	<modules>
-		<module>stat</module>
-		<module>statDto</module>
-		<module>statClient</module>
+		<module>stats-server</module>
+		<module>stats-dto</module>
+		<module>stats-client</module>
 	</modules>
 	<dependencies>
 		<dependency>

@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>stat</artifactId>
+    <artifactId>stats-server</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -45,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>ru.practicum</groupId>
-            <artifactId>statDto</artifactId>
+            <artifactId>stats-dto</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
