@@ -1,11 +1,14 @@
 services:
   stats-server:
+    build: stats-server
     image: stats-server
     container_name: stats-server
     ports:
       - "9090:9090"
     environment:
       - EXPLORE_WITH_ME_STAT_URL=http://server:9090
+#        - SPRING_DATASOURCE_USERNAME=username
+#        - SPRING_DATASOURCE_PASSWORD=password
 
 #  stats-db:
 #    image: postgres:16.1
