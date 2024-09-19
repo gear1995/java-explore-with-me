@@ -1,4 +1,4 @@
-package ru.practicum.hit.controller.service;
+package ru.practicum.hit.service;
 
 import ru.practicum.dto.HitDto;
 

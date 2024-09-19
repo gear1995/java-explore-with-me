@@ -19,6 +19,8 @@ public class HitMapper {
                 .id(hitDto.getId())
                 .app(hitDto.getApp())
                 .uri(hitDto.getUri())
+                .ip(hitDto.getIp())
+                .queried(hitDto.getQueried())
                 .build();
     }
 
@@ -31,7 +33,6 @@ public class HitMapper {
                 .id(hit.getId())
                 .app(hit.getApp())
                 .uri(hit.getUri())
-                .hits(hit.getHitsCount())
                 .build();
     }
 

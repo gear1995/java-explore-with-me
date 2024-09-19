@@ -3,6 +3,8 @@ package ru.practicum.hit.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Builder
 @Data
@@ -21,7 +23,5 @@ public class Hit {
     @Column(nullable = false)
     private String ip;
     @Column(nullable = false)
-    private String queried;
-    @Transient
-    private Long hitsCount;
+    private LocalDateTime queried;
 }

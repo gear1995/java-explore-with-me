@@ -13,7 +13,7 @@ import ru.practicum.dto.HitDto;
 public class HitClient extends BaseClient {
     private static final String API_PREFIX = "/hit";
 
-    public HitClient(@Value("${explore-with-me-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public HitClient(@Value("${explore-with-me-stat.url}") String serverUrl, RestTemplateBuilder builder) {
         super(builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())

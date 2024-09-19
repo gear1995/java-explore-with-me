@@ -15,7 +15,7 @@ import java.util.Map;
 public class StatsClient extends BaseClient {
     private static final String API_PREFIX = "/stats";
 
-    public StatsClient(@Value("${explore-with-me-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatsClient(@Value("${explore-with-me-stat.url}") String serverUrl, RestTemplateBuilder builder) {
         super(builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())

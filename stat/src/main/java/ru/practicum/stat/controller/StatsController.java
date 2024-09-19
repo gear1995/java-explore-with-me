@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.dto.HitDto;
+import ru.practicum.dto.StatDto;
 import ru.practicum.stat.model.Stat;
 import ru.practicum.stat.service.StatsService;
 
@@ -22,12 +22,15 @@ public class StatsController {
     private final StatsService statsService;
 
     @GetMapping
-    public List<HitDto> getStats(@RequestParam String start,
-                                 @RequestParam String end,
-                                 @RequestParam List<String> uris,
-                                 @RequestParam(required = false) boolean unique) {
+    public List<StatDto> getStats(@RequestParam String start,
+                                  @RequestParam String end,
+                                  @RequestParam(required = false) List<String> uris,
+                                  @RequestParam(required = false) boolean unique) {
         log.info("Getting stats");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if (uris != null && uris.isEmpty()) {
+            uris = null;
+        }
         return statsService.getStats(
                 Stat.builder()
                         .start(LocalDateTime.parse(start, formatter))
