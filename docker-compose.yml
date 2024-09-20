@@ -6,10 +6,10 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-          - stats-db
+      - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/stats-db
-      - STATS-SERVER_URL=http://server:9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats-db
+      - STATS-SERVER_URL=http://stats-server:9090
       - SPRING_DATASOURCE_USERNAME=username
       - SPRING_DATASOURCE_PASSWORD=password
 
