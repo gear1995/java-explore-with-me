@@ -1,11 +1,16 @@
 package ru.practicum.event.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.practicum.event.dto.SimpleEventDto;
 import ru.practicum.event.model.Event;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
-    List<SimpleEventDto> gerEventsByParam(List<Long> users, List<String> states, List<Long> categories, String rangeStart, String rangeEnd, int from, int size);
+    Page<Event> findAllByInitiatorId(Long userId, Pageable page);
+
+    Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);
+
+    Optional<Event> findByIdAndPublishedOnIsNotNull(Long id);
 }

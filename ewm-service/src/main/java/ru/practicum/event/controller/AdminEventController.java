@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.event.dto.EventDto;
-import ru.practicum.event.dto.SimpleEventDto;
 import ru.practicum.event.service.EventService;
 
 import java.util.List;

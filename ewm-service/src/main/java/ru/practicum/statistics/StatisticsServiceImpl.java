@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatDto;
 import ru.practicum.event.model.Event;
+import ru.practicum.hit.client.HitClient;
 import ru.practicum.stat.client.StatsClient;
 
 import java.time.LocalDateTime;
@@ -13,11 +14,11 @@ import java.util.List;
 
 import static ru.practicum.utils.Constants.DATE_TIME_FORMATTER;
 
-
 @Service
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
-    private final StatsClient statClient;
+    private final HitClient hitClient;
+    private final StatsClient statsClient;
 
     @Override
     public void sendStat(Event event, HttpServletRequest request) {
@@ -32,7 +33,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .ip(remoteAddr)
                 .build();
 
-        statClient.addStats(requestDto);
+        hitClient.createHit(requestDto);
         sendStatForTheEvent(event.getId(), remoteAddr, now, nameService);
     }
 
@@ -42,36 +43,41 @@ public class StatisticsServiceImpl implements StatisticsService {
         String remoteAddr = request.getRemoteAddr();
         String nameService = "main-service";
 
-        EndpointHitDto requestDto = new EndpointHitDto();
-        requestDto.setTimestamp(now.format(DATE_TIME_FORMATTER));
-        requestDto.setUri("/events");
-        requestDto.setApp(nameService);
-        requestDto.setIp(request.getRemoteAddr());
-        statClient.addStats(requestDto);
+        HitDto requestDto = HitDto.builder()
+                .uri("/events")
+                .app(nameService)
+                .ip(remoteAddr)
+                .queried(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER)))
+                .build();
+        hitClient.createHit(requestDto);
         sendStatForEveryEvent(events, remoteAddr, LocalDateTime.now(), nameService);
     }
 
     @Override
     public void sendStatForTheEvent(Long eventId, String remoteAddr, LocalDateTime now,
                                     String nameService) {
-        EndpointHitDto requestDto = new EndpointHitDto();
-        requestDto.setTimestamp(now.format(DATE_TIME_FORMATTER));
-        requestDto.setUri("/events/" + eventId);
-        requestDto.setApp(nameService);
-        requestDto.setIp(remoteAddr);
-        statClient.addStats(requestDto);
+        HitDto requestDto = HitDto.builder()
+                .app(nameService)
+                .uri("/events/" + eventId)
+                .ip(remoteAddr)
+                .queried(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER)))
+                .build();
+
+        hitClient.createHit(requestDto);
     }
 
     @Override
     public void sendStatForEveryEvent(List<Event> events, String remoteAddr, LocalDateTime now,
                                       String nameService) {
         for (Event event : events) {
-            EndpointHitDto requestDto = new EndpointHitDto();
-            requestDto.setTimestamp(now.format(DATE_TIME_FORMATTER));
-            requestDto.setUri("/events/" + event.getId());
-            requestDto.setApp(nameService);
-            requestDto.setIp(remoteAddr);
-            statClient.addStats(requestDto);
+            HitDto requestDto = HitDto.builder()
+                    .uri("/events/" + event.getId())
+                    .app(nameService)
+                    .ip(remoteAddr)
+                    .queried(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER)))
+                    .build();
+
+            hitClient.createHit(requestDto);
         }
     }
 
@@ -83,7 +89,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         List<StatDto> stats = getStats(startTime, endTime, uris);
         if (stats.size() == 1) {
-            event.setViews(stats.get(0).getHits());
+            event.setViews(stats.getFirst().getHits());
         } else {
             event.setViews(0L);
         }
@@ -91,6 +97,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public List<StatDto> getStats(String startTime, String endTime, List<String> uris) {
-        return statClient.getStats(startTime, endTime, uris, false);
+        return (List<StatDto>) statsClient.getStat(startTime, endTime, uris, false);
     }
 }

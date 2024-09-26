@@ -6,9 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.category.model.Category;
-import ru.practicum.event.model.EventState;
 import ru.practicum.event.model.Location;
+import ru.practicum.event.model.StateAction;
 
 import java.time.LocalDateTime;
 
@@ -17,13 +16,12 @@ import static ru.practicum.utils.Constants.DATE_TIME_FORMAT;
 @Data
 @Builder
 @AllArgsConstructor
-public class SimpleEventDto {
-    private Long id;
+public class NewEventDto {
     @NotNull
     @Size(min = 20, max = 2000)
     private String annotation;
     @NotNull
-    private Category category;
+    private Long category;
     @NotNull
     @Size(min = 20, max = 7000)
     private String description;
@@ -35,8 +33,8 @@ public class SimpleEventDto {
     private Boolean paid;
     private Long participantLimit;
     private Boolean requestModeration;
-    private EventState stateAction;
     @NotNull
     @Size(min = 3, max = 120)
     private String title;
+    private StateAction stateAction;
 }
