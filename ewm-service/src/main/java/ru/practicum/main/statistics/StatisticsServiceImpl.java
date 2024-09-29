@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatDto;
 import ru.practicum.main.event.model.Event;
+import ru.practicum.stat.client.StatClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +16,7 @@ import static ru.practicum.main.utils.Constants.DATE_TIME_FORMATTER;
 @Service
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
-//    private final StatClient statClient;
+    private final StatClient statClient;
 
     @Override
     public void sendStat(Event event, HttpServletRequest request) {
@@ -30,7 +31,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .ip(remoteAddr)
                 .build();
 
-//        statClient.createHit(requestDto);
+        statClient.createHit(requestDto);
         sendStatForTheEvent(event.getId(), remoteAddr, now, nameService);
     }
 
@@ -46,7 +47,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .ip(remoteAddr)
                 .queried(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER)))
                 .build();
-//        statClient.createHit(requestDto);
+        statClient.createHit(requestDto);
         sendStatForEveryEvent(events, remoteAddr, LocalDateTime.now(), nameService);
     }
 
@@ -60,7 +61,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .queried(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER)))
                 .build();
 
-//        statClient.createHit(requestDto);
+        statClient.createHit(requestDto);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     .queried(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER)))
                     .build();
 
-//            statClient.createHit(requestDto);
+            statClient.createHit(requestDto);
         }
     }
 
@@ -94,7 +95,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public List<StatDto> getStats(String startTime, String endTime, List<String> uris) {
-//        return (List<StatDto>) statClient.getStat(startTime, endTime, uris, false);
-        return null;
+        return (List<StatDto>) statClient.getStat(startTime, endTime, uris, false);
+//        return null;
     }
 }
