@@ -1,4 +1,4 @@
-package ru.practicum.stat_client;
+package ru.practicum;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatDto;
-import ru.practicum.exception.StatsException;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,7 +20,7 @@ public class StatClient {
     private final String serverUrl;
     private final RestTemplate restTemplate;
 
-    public StatClient(@Value("${stats-server.url}") String serverUrl, RestTemplate restTemplate) {
+    public StatClient(@Value("${stat-server.url}") String serverUrl, RestTemplate restTemplate) {
         this.serverUrl = serverUrl;
         this.restTemplate = restTemplate;
     }

@@ -15,6 +15,7 @@ import java.util.Set;
 @Table(name = "compilations")
 public class Compilation {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private boolean pinned;
     private String title;

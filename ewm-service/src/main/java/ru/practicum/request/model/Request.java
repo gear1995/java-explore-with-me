@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "requests")
 public class Request {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime created;
     private Long event;
