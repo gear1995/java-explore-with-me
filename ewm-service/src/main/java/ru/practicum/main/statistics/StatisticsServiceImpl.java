@@ -95,7 +95,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public List<StatDto> getStats(String startTime, String endTime, List<String> uris) {
-        return (List<StatDto>) statClient.getStat(startTime, endTime, uris, false);
-//        return null;
+        return statClient.getStat(startTime, endTime, uris, false);
     }
 }
