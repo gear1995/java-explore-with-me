@@ -11,6 +11,7 @@ public class StatsClientApp {
     public static void main(String[] args) {
         SpringApplication.run(StatsClientApp.class, args);
     }
+
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
