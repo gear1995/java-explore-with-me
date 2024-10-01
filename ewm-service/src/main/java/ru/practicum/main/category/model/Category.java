@@ -5,10 +5,10 @@ import lombok.*;
 
 @Entity
 @Builder
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"id"})
 @Table(name = "categories")
 public class Category {
     @Id

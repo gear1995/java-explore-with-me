@@ -1,19 +1,14 @@
 package ru.practicum.main.event.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
-@Builder
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(of = {"id"})
 @Table(name = "locations")
 public class Location {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private float lat;
     private float lon;

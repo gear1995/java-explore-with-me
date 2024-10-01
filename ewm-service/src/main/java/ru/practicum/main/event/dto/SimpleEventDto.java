@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.main.category.model.Category;
 import ru.practicum.main.event.model.EventState;
 import ru.practicum.main.event.model.Location;
@@ -17,6 +18,7 @@ import static ru.practicum.main.utils.Constants.DATE_TIME_FORMAT;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class SimpleEventDto {
     private Long id;
     @NotNull

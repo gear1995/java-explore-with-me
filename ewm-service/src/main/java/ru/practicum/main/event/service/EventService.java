@@ -1,22 +1,21 @@
 package ru.practicum.main.event.service;
 
 import jakarta.servlet.http.HttpServletRequest;
-import ru.practicum.main.event.dto.EventDto;
-import ru.practicum.main.event.dto.NewEventDto;
-import ru.practicum.main.event.dto.SimpleEventDto;
+import ru.practicum.main.event.dto.*;
 import ru.practicum.main.event.model.Event;
+import ru.practicum.main.event.model.EventState;
 import ru.practicum.main.event.model.SortValue;
 
 import java.util.List;
 
 public interface EventService {
     List<EventDto> getEventsByParam(List<Long> users,
-                                    List<String> states,
+                                    EventState states,
                                     List<Long> categories,
                                     String rangeStart,
                                     String rangeEnd,
-                                    int from,
-                                    int size);
+                                    Integer from,
+                                    Integer size);
 
     void setView(List<Event> events);
 
@@ -26,7 +25,7 @@ public interface EventService {
 
     EventDto getEventById(Long userId, Long eventId);
 
-    EventDto updateEventById(Long userId, Long eventId, NewEventDto newEventDto);
+    EventDto updateEventById(Long userId, Long eventId, UpdateEventByUserDto newEventDto);
 
     List<EventDto> getPublicEventsByParam(String text,
                                           List<Long> categories,
@@ -39,4 +38,6 @@ public interface EventService {
                                           Integer size, HttpServletRequest request);
 
     EventDto getPublicEventById(Long eventId, HttpServletRequest request);
+
+    EventDto updateEvent(Long eventId, UpdateEventDto updateEventAdminDto);
 }

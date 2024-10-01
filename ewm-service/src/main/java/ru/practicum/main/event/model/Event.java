@@ -12,27 +12,34 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"id"})
 @Table(name = "events")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String annotation;
+
     @OneToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
+
     @JoinColumn(name = "confirmed_requests")
     private Long confirmedRequests;
+
     @JoinColumn(name = "created_on")
     private LocalDateTime createdOn;
+
     private String description;
+
     @JoinColumn(name = "event_date")
     private LocalDateTime eventDate;
+
     @OneToOne
-    @JoinColumn(name = "initiator_id")
+    @JoinColumn(name = "initiator_id", referencedColumnName = "id")
     private User initiator;
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
     private Boolean paid;
     @JoinColumn(name = "participant_limit")

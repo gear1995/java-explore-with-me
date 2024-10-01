@@ -1,7 +1,6 @@
 package ru.practicum.main.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -9,8 +8,9 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.main.event.model.EventState;
+import ru.practicum.main.event.model.AdminStateAction;
 import ru.practicum.main.event.model.Location;
+import ru.practicum.main.event.model.UserStateAction;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +19,7 @@ import static ru.practicum.main.utils.Constants.DATE_TIME_FORMAT;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class NewEventDto {
+public class UpdateEventByUserDto {
     @NotBlank(message = "annotation must not be blank")
     @Size(min = 20, max = 2000)
     private String annotation;
@@ -37,9 +37,6 @@ public class NewEventDto {
 
     private LocalDateTime createdOn;
 
-    @Nullable
-    private EventState state;
-
     @NotNull
     private Location location;
 
@@ -54,5 +51,5 @@ public class NewEventDto {
     @Size(min = 3, max = 120)
     private String title;
 
-    private EventState stateAction;
+    private UserStateAction stateAction;
 }

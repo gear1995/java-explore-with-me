@@ -7,23 +7,18 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.dto.StatDto;
 import ru.practicum.main.category.model.Category;
 import ru.practicum.main.category.repository.CategoryRepository;
-import ru.practicum.dto.StatDto;
-import ru.practicum.main.event.dto.EventDto;
-import ru.practicum.main.event.dto.NewEventDto;
-import ru.practicum.main.event.dto.SimpleEventDto;
+import ru.practicum.main.event.dto.*;
 import ru.practicum.main.event.mapper.EventMapper;
-import ru.practicum.main.event.model.Event;
-import ru.practicum.main.event.model.EventState;
-import ru.practicum.main.event.model.SortValue;
-import ru.practicum.main.event.model.StateAction;
+import ru.practicum.main.event.model.*;
 import ru.practicum.main.event.repository.EventRepository;
 import ru.practicum.main.exeption.NotFoundException;
-import ru.practicum.main.exeption.ValidationException;
 import ru.practicum.main.statistics.StatisticsService;
 import ru.practicum.main.user.model.User;
 import ru.practicum.main.user.repository.UserRepository;
@@ -44,13 +39,13 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
 
     @Override
-    public List<EventDto> getEventsByParam(List<Long> users,
-                                           List<String> states,
-                                           List<Long> categories,
+    public List<EventDto> getEventsByParam(List<Long> usersId,
+                                           EventState states,
+                                           List<Long> categoriesId,
                                            String rangeStart,
                                            String rangeEnd,
-                                           int from,
-                                           int size) {
+                                           Integer from,
+                                           Integer size) {
         LocalDateTime start = rangeStart != null
                 ? LocalDateTime.parse(rangeStart, DATE_TIME_FORMATTER)
                 : null;
@@ -65,13 +60,13 @@ public class EventServiceImpl implements EventService {
         Root<Event> root = query.from(Event.class);
         Predicate criteria = builder.conjunction();
 
-        if (categories != null && !categories.isEmpty()) {
-            Predicate containCategories = root.get("category").in(categories);
+        if (categoriesId != null && !categoriesId.isEmpty()) {
+            Predicate containCategories = root.get("category").in(categoriesId);
             criteria = builder.and(criteria, containCategories);
         }
 
-        if (users != null && !users.isEmpty()) {
-            Predicate containUsers = root.get("initiator").in(users);
+        if (usersId != null && !usersId.isEmpty()) {
+            Predicate containUsers = root.get("initiator").in(usersId);
             criteria = builder.and(criteria, containUsers);
         }
 
@@ -133,14 +128,14 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("Category " + eventDto.getCategory() + " not found"));
         LocalDateTime eventDate = eventDto.getEventDate();
         if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new NotFoundException("Event date " + eventDate + " is after event date " + LocalDateTime.now().plusHours(2));
+            throw new DataIntegrityViolationException("Event date " + eventDate + " is after event date " + LocalDateTime.now().plusHours(2));
         }
         Event event = EventMapper.toEvent(eventDto, category);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
         event.setInitiator(user);
 
-        return EventMapper.toEventDto(eventRepository.save(EventMapper.toEvent(eventDto, category)));
+        return EventMapper.toEventDto(eventRepository.save(event));
     }
 
     @Override
@@ -162,58 +157,63 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDto updateEventById(Long userId, Long eventId, NewEventDto newEventDto) {
+    public EventDto updateEventById(Long userId, Long eventId, UpdateEventByUserDto eventDto) {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Event with id %s or user with id %s not found", eventId, userId)));
 
         if (event.getPublishedOn() != null) {
-            throw new ValidationException("Event is published, update denied");
+            throw new DataIntegrityViolationException("Event is published, update denied");
         }
 
-        if (newEventDto == null) {
+        if (eventDto == null) {
             return EventMapper.toEventDto(event);
         }
 
-        if (newEventDto.getAnnotation() != null) {
-            event.setAnnotation(newEventDto.getAnnotation());
+        if (eventDto.getAnnotation() != null) {
+            event.setAnnotation(eventDto.getAnnotation());
         }
-        if (newEventDto.getCategory() != null) {
-            Category category = categoryRepository.findById(newEventDto.getCategory())
-                    .orElseThrow(() -> new NotFoundException("Category width id " + newEventDto.getCategory() + " not found"));
+        if (eventDto.getCategory() != null) {
+            Category category = categoryRepository.findById(eventDto.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Category width id " + eventDto.getCategory() + " not found"));
             event.setCategory(category);
         }
-        if (newEventDto.getDescription() != null) {
-            event.setDescription(newEventDto.getDescription());
+        if (eventDto.getDescription() != null) {
+            event.setDescription(eventDto.getDescription());
         }
-        if (newEventDto.getEventDate() != null) {
-            LocalDateTime eventDateTime = newEventDto.getEventDate();
+        if (eventDto.getEventDate() != null) {
+            LocalDateTime eventDateTime = eventDto.getEventDate();
             if (eventDateTime.isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new ValidationException("The date and time for which the event is scheduled cannot be earlier" +
-                                              " than two hours from the current moment");
+                throw new DataIntegrityViolationException("The date and time for which the event is scheduled cannot be earlier" +
+                                                          " than two hours from the current moment");
             }
-            event.setEventDate(newEventDto.getEventDate());
+            event.setEventDate(eventDto.getEventDate());
         }
-        if (newEventDto.getLocation() != null) {
-            event.setLocation(newEventDto.getLocation());
+        if (eventDto.getLocation() != null) {
+            event.setLocation(eventDto.getLocation());
         }
-        if (newEventDto.getPaid() != null) {
-            event.setPaid(newEventDto.getPaid());
-        }
-        if (newEventDto.getParticipantLimit() != null) {
-            event.setParticipantLimit(newEventDto.getParticipantLimit());
-        }
-        if (newEventDto.getRequestModeration() != null) {
-            event.setRequestModeration(newEventDto.getRequestModeration());
-        }
-        if (newEventDto.getTitle() != null) {
-            event.setTitle(newEventDto.getTitle());
+        if (eventDto.getPaid() != null) {
+            event.setPaid(eventDto.getPaid());
         }
 
-        if (newEventDto.getStateAction() != null) {
-            if (newEventDto.getStateAction().equals(StateAction.SEND_TO_REVIEW)) {
+        if (eventDto.getParticipantLimit() != null) {
+            Long participantLimit = eventDto.getParticipantLimit();
+            if (participantLimit < 0) {
+                throw new DataIntegrityViolationException("Participant limit is negative");
+            }
+            event.setParticipantLimit(participantLimit);
+        }
+        if (eventDto.getRequestModeration() != null) {
+            event.setRequestModeration(eventDto.getRequestModeration());
+        }
+        if (eventDto.getTitle() != null) {
+            event.setTitle(eventDto.getTitle());
+        }
+
+        if (eventDto.getStateAction() != null) {
+            if (eventDto.getStateAction().equals(UserStateAction.SEND_TO_REVIEW)) {
                 event.setState(EventState.PENDING);
             } else {
-                event.setState(EventState.REJECT_EVENT);
+                event.setState(EventState.CANCELED);
             }
         }
 
@@ -323,5 +323,70 @@ public class EventServiceImpl implements EventService {
         statisticsService.sendStat(event, request);
 
         return EventMapper.toEventDto(event);
+    }
+
+    @Override
+    public EventDto updateEvent(Long eventId, UpdateEventDto updateEventAdminDto) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException(String.format("Event with id %s not found", eventId)));
+
+        if (updateEventAdminDto == null) {
+            return EventMapper.toEventDto(event);
+        }
+
+        if (updateEventAdminDto.getAnnotation() != null) {
+            event.setAnnotation(updateEventAdminDto.getAnnotation());
+        }
+        if (updateEventAdminDto.getCategory() != null) {
+            Category category = categoryRepository.findById(updateEventAdminDto.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Category with id " + updateEventAdminDto.getCategory() + " not found"));
+            event.setCategory(category);
+        }
+        if (updateEventAdminDto.getDescription() != null) {
+            event.setDescription(updateEventAdminDto.getDescription());
+        }
+        if (updateEventAdminDto.getLocation() != null) {
+            event.setLocation(updateEventAdminDto.getLocation());
+        }
+        if (updateEventAdminDto.getPaid() != null) {
+            event.setPaid(updateEventAdminDto.getPaid());
+        }
+        if (updateEventAdminDto.getParticipantLimit() != null) {
+            event.setParticipantLimit(updateEventAdminDto.getParticipantLimit());
+        }
+        if (updateEventAdminDto.getRequestModeration() != null) {
+            event.setRequestModeration(updateEventAdminDto.getRequestModeration());
+        }
+        if (updateEventAdminDto.getTitle() != null) {
+            event.setTitle(updateEventAdminDto.getTitle());
+        }
+        if (updateEventAdminDto.getStateAction() != null) {
+            if (updateEventAdminDto.getStateAction().equals(AdminStateAction.PUBLISH_EVENT)) {
+                if (event.getPublishedOn() != null) {
+                    throw new DataIntegrityViolationException("Event is already published");
+                }
+                if (event.getState().equals(EventState.CANCELED)) {
+                    throw new DataIntegrityViolationException("Event is already canceled");
+                }
+                event.setState(EventState.PUBLISHED);
+                event.setPublishedOn(LocalDateTime.now());
+            } else if (updateEventAdminDto.getStateAction().equals(AdminStateAction.REJECT_EVENT)) {
+                if (event.getPublishedOn() != null) {
+                    throw new DataIntegrityViolationException("Event is already published");
+                }
+                event.setState(EventState.CANCELED);
+            }
+        }
+        if (updateEventAdminDto.getEventDate() != null) {
+            LocalDateTime eventDateTime = updateEventAdminDto.getEventDate();
+            if (eventDateTime.isBefore(LocalDateTime.now())
+                || eventDateTime.isBefore(event.getPublishedOn().plusHours(1))) {
+                throw new DataIntegrityViolationException("The start date of the event to be modified is less than one hour from the publication date.");
+            }
+
+            event.setEventDate(updateEventAdminDto.getEventDate());
+        }
+
+        return EventMapper.toEventDto(eventRepository.save(event));
     }
 }

@@ -45,7 +45,8 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .uri("/events")
                 .app(nameService)
                 .ip(remoteAddr)
-                .queried(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER)))
+//                .queried(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER)))
+                .queried(LocalDateTime.now())
                 .build();
         statClient.createHit(requestDto);
         sendStatForEveryEvent(events, remoteAddr, LocalDateTime.now(), nameService);
@@ -72,7 +73,8 @@ public class StatisticsServiceImpl implements StatisticsService {
                     .uri("/events/" + event.getId())
                     .app(nameService)
                     .ip(remoteAddr)
-                    .queried(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER)))
+//                    .queried(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER)))
+                    .queried(LocalDateTime.now())
                     .build();
 
             statClient.createHit(requestDto);

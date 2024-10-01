@@ -38,5 +38,5 @@ public class EventDto {
     private UserDto initiator;
     private LocalDateTime publishedOn;
     private Long views;
-//    private EventState state;
+    private EventState state;
 }

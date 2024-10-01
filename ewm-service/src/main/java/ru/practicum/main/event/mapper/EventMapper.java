@@ -8,6 +8,7 @@ import ru.practicum.main.event.dto.SimpleEventDto;
 import ru.practicum.main.event.model.Event;
 import ru.practicum.main.user.mapper.UserMapper;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class EventMapper {
         }
 
         return Event.builder()
+                .paid(newEventDto.getPaid())
                 .eventDate(newEventDto.getEventDate())
                 .annotation(newEventDto.getAnnotation())
                 .description(newEventDto.getDescription())
@@ -52,6 +54,8 @@ public class EventMapper {
                 .location(newEventDto.getLocation())
                 .participantLimit(newEventDto.getParticipantLimit())
                 .title(newEventDto.getTitle())
+                .createdOn(LocalDateTime.now())
+                .state(newEventDto.getState())
                 .build();
     }
 
@@ -83,15 +87,20 @@ public class EventMapper {
 
         return EventDto.builder()
                 .id(event.getId())
+                .createdOn(event.getCreatedOn())
+                .views(event.getViews())
+                .confirmedRequests(event.getConfirmedRequests())
                 .annotation(event.getAnnotation())
                 .eventDate(event.getEventDate())
                 .category(event.getCategory())
                 .description(event.getDescription())
+                .initiator(UserMapper.toUserDto(event.getInitiator()))
+                .publishedOn(event.getPublishedOn())
                 .title(event.getTitle())
                 .location(event.getLocation())
                 .paid(event.getPaid())
                 .participantLimit(event.getParticipantLimit())
-                .stateAction(event.getState())
+                .state(event.getState())
                 .requestModeration(event.getRequestModeration())
                 .build();
     }

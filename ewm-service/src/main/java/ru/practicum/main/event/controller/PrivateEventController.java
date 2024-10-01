@@ -4,15 +4,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.main.event.dto.EventDto;
-import ru.practicum.main.event.dto.NewEventDto;
-import ru.practicum.main.event.dto.SimpleEventDto;
+import ru.practicum.main.event.dto.*;
+import ru.practicum.main.event.model.EventState;
 import ru.practicum.main.event.service.EventService;
 import ru.practicum.main.request.dto.RequestDto;
 import ru.practicum.main.request.dto.RequestStatusDto;
 import ru.practicum.main.request.dto.RequestStatusUpdateDto;
 import ru.practicum.main.request.service.RequestService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -25,7 +25,18 @@ public class PrivateEventController {
 
     @PostMapping
     public EventDto createEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto event) {
-        log.info("Creating event {}", event);
+        log.info("Creating event");
+
+        if (event.getCreatedOn() == null) {
+            event.setCreatedOn(LocalDateTime.now());
+        }
+        if (event.getRequestModeration()) {
+            event.setRequestModeration(false);
+        }
+        if (event.getState() == null) {
+            event.setState(EventState.PENDING);
+        }
+
         return eventService.createEvent(userId, event);
     }
 
@@ -44,9 +55,11 @@ public class PrivateEventController {
     }
 
     @PatchMapping("{eventId}")
-    public EventDto updateEventById(@PathVariable Long userId, @PathVariable Long eventId, NewEventDto newEventDto) {
+    public EventDto updateEventById(@PathVariable Long userId,
+                                    @PathVariable Long eventId,
+                                    @RequestBody UpdateEventByUserDto updateEventByUserDto) {
         log.info("Updating event by eventId {}", eventId);
-        return eventService.updateEventById(userId, eventId, newEventDto);
+        return eventService.updateEventById(userId, eventId, updateEventByUserDto);
     }
 
     @GetMapping("{eventId}/requests")
@@ -59,6 +72,7 @@ public class PrivateEventController {
     public RequestStatusDto updateRequests(@PathVariable Long userId,
                                            @PathVariable Long eventId,
                                            @RequestBody RequestStatusUpdateDto requestStatusUpdateDto) {
+        log.info("Updating requests by event owner");
         return requestService.updateRequests(userId, eventId, requestStatusUpdateDto);
     }
 }
