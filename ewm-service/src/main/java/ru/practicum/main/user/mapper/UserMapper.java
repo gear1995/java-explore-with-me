@@ -4,9 +4,12 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.main.user.dto.UserDto;
 import ru.practicum.main.user.model.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @UtilityClass
 public class UserMapper {
-    public UserDto toUserDto(User user) {
+    public static UserDto toUserDto(User user) {
         if (user == null) {
             return null;
         }
@@ -17,7 +20,7 @@ public class UserMapper {
                 .build();
     }
 
-    public User toUser(UserDto userDto) {
+    public static User toUser(UserDto userDto) {
         if (userDto == null) {
             return null;
         }
@@ -26,5 +29,18 @@ public class UserMapper {
                 .name(userDto.getName())
                 .email(userDto.getEmail())
                 .build();
+    }
+
+    public static List<UserDto> toUserDtoList(List<User> list) {
+        if (list == null) {
+            return null;
+        }
+
+        List<UserDto> dtoList = new ArrayList<>();
+        for (User user : list) {
+            dtoList.add(toUserDto(user));
+        }
+
+        return dtoList;
     }
 }

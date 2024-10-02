@@ -9,7 +9,7 @@ import java.util.List;
 
 @UtilityClass
 public class RequestMapper {
-    public RequestDto toRequestDto(Request request) {
+    public static RequestDto toRequestDto(Request request) {
         if (request == null) {
             return null;
         }
@@ -22,7 +22,7 @@ public class RequestMapper {
                 .build();
     }
 
-    public Request toRequest(RequestDto requestDto) {
+    public static Request toRequest(RequestDto requestDto) {
         if (requestDto == null) {
             return null;
         }

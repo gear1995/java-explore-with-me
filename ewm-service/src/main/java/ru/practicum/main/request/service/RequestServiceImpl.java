@@ -9,7 +9,6 @@ import ru.practicum.main.exeption.ValidationException;
 import ru.practicum.main.request.dto.RequestDto;
 import ru.practicum.main.request.dto.RequestStatusDto;
 import ru.practicum.main.request.dto.RequestStatusUpdateDto;
-import ru.practicum.main.request.mapper.RequestMapper;
 import ru.practicum.main.request.model.Request;
 import ru.practicum.main.request.model.RequestStatus;
 import ru.practicum.main.request.repository.RequestRepository;
@@ -18,6 +17,9 @@ import ru.practicum.main.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.practicum.main.request.mapper.RequestMapper.toRequestDto;
+import static ru.practicum.main.request.mapper.RequestMapper.toRequestDtoList;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +54,7 @@ public class RequestServiceImpl implements RequestService {
                 .event(eventId)
                 .build();
 
-        return RequestMapper.toRequestDto(requestRepository.save(request));
+        return toRequestDto(requestRepository.save(request));
     }
 
     @Override
@@ -63,7 +65,7 @@ public class RequestServiceImpl implements RequestService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found"));
 
-        return RequestMapper.toRequestDtoList(requestRepository.findAllByEventWithInitiator(userId, eventId));
+        return toRequestDtoList(requestRepository.findAllByEventWithInitiator(userId, eventId));
     }
 
     @Override
@@ -109,11 +111,11 @@ public class RequestServiceImpl implements RequestService {
         eventRepository.save(event);
 
         if (requestStatusUpdateDto.getStatus().equals(RequestStatus.CONFIRMED)) {
-            requestStatusDto.setConfirmedRequests(RequestMapper.toRequestDtoList(requestsToUpdate));
+            requestStatusDto.setConfirmedRequests(toRequestDtoList(requestsToUpdate));
         }
 
         if (requestStatusUpdateDto.getStatus().equals(RequestStatus.REJECTED)) {
-            requestStatusDto.setRejectedRequests(RequestMapper.toRequestDtoList(requestsToUpdate));
+            requestStatusDto.setRejectedRequests(toRequestDtoList(requestsToUpdate));
         }
 
         return requestStatusDto;
@@ -124,7 +126,7 @@ public class RequestServiceImpl implements RequestService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found"));
 
-        return RequestMapper.toRequestDtoList(requestRepository.findAllByRequester(userId));
+        return toRequestDtoList(requestRepository.findAllByRequester(userId));
     }
 
     @Override
@@ -139,6 +141,6 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> new NotFoundException("Request with id " + requestId + " not found"));
         request.setStatus(RequestStatus.CANCELED);
 
-        return RequestMapper.toRequestDto(requestRepository.save(request));
+        return toRequestDto(requestRepository.save(request));
     }
 }

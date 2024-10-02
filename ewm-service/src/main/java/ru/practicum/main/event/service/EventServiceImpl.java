@@ -15,7 +15,6 @@ import ru.practicum.dto.StatDto;
 import ru.practicum.main.category.model.Category;
 import ru.practicum.main.category.repository.CategoryRepository;
 import ru.practicum.main.event.dto.*;
-import ru.practicum.main.event.mapper.EventMapper;
 import ru.practicum.main.event.model.*;
 import ru.practicum.main.event.repository.EventRepository;
 import ru.practicum.main.exeption.NotFoundException;
@@ -27,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ru.practicum.main.event.mapper.EventMapper.*;
 import static ru.practicum.main.utils.Constants.DATE_TIME_FORMATTER;
 
 @Service
@@ -96,7 +96,7 @@ public class EventServiceImpl implements EventService {
         }
 
         setView(events);
-        return EventMapper.toEventDtoList(events);
+        return toEventDtoList(events);
     }
 
     @Override
@@ -130,12 +130,12 @@ public class EventServiceImpl implements EventService {
         if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
             throw new DataIntegrityViolationException("Event date " + eventDate + " is after event date " + LocalDateTime.now().plusHours(2));
         }
-        Event event = EventMapper.toEvent(eventDto, category);
+        Event event = toEvent(eventDto, category);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
         event.setInitiator(user);
 
-        return EventMapper.toEventDto(eventRepository.save(event));
+        return toEventDto(eventRepository.save(event));
     }
 
     @Override
@@ -144,7 +144,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found"));
         Pageable page = PageRequest.of(from / size, size);
 
-        return EventMapper.toSimpleEventDtoList(eventRepository.findAllByInitiatorId(userId, page).toList());
+        return toSimpleEventDtoList(eventRepository.findAllByInitiatorId(userId, page).toList());
     }
 
     @Override
@@ -152,7 +152,7 @@ public class EventServiceImpl implements EventService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found"));
 
-        return EventMapper.toEventDto(eventRepository.findByIdAndInitiatorId(eventId, userId)
+        return toEventDto(eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id: " + eventId + " not found")));
     }
 
@@ -166,7 +166,7 @@ public class EventServiceImpl implements EventService {
         }
 
         if (eventDto == null) {
-            return EventMapper.toEventDto(event);
+            return toEventDto(event);
         }
 
         if (eventDto.getAnnotation() != null) {
@@ -217,7 +217,7 @@ public class EventServiceImpl implements EventService {
             }
         }
 
-        return EventMapper.toEventDto(eventRepository.save(event));
+        return toEventDto(eventRepository.save(event));
     }
 
     @Override
@@ -311,7 +311,7 @@ public class EventServiceImpl implements EventService {
         setView(events);
         statisticsService.sendStat(events, request);
 
-        return EventMapper.toEventDtoList(events);
+        return toEventDtoList(events);
     }
 
     @Override
@@ -322,7 +322,7 @@ public class EventServiceImpl implements EventService {
         statisticsService.setView(event);
         statisticsService.sendStat(event, request);
 
-        return EventMapper.toEventDto(event);
+        return toEventDto(event);
     }
 
     @Override
@@ -331,7 +331,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException(String.format("Event with id %s not found", eventId)));
 
         if (updateEventAdminDto == null) {
-            return EventMapper.toEventDto(event);
+            return toEventDto(event);
         }
 
         if (updateEventAdminDto.getAnnotation() != null) {
@@ -387,6 +387,6 @@ public class EventServiceImpl implements EventService {
             event.setEventDate(updateEventAdminDto.getEventDate());
         }
 
-        return EventMapper.toEventDto(eventRepository.save(event));
+        return toEventDto(eventRepository.save(event));
     }
 }

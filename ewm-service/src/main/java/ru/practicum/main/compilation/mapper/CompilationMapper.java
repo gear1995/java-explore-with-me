@@ -9,7 +9,7 @@ import java.util.List;
 
 @UtilityClass
 public class CompilationMapper {
-    public Compilation toCompilation(final CompilationDto compilationDto) {
+    public static Compilation toCompilation(final CompilationDto compilationDto) {
         if (compilationDto == null) {
             return null;
         }
@@ -21,7 +21,7 @@ public class CompilationMapper {
                 .build();
     }
 
-    public CompilationDto toCompilationDto(final Compilation compilation) {
+    public static CompilationDto toCompilationDto(final Compilation compilation) {
         if (compilation == null) {
             return null;
         }
