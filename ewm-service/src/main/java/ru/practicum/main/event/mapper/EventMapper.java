@@ -6,11 +6,13 @@ import ru.practicum.main.event.dto.EventDto;
 import ru.practicum.main.event.dto.NewEventDto;
 import ru.practicum.main.event.dto.SimpleEventDto;
 import ru.practicum.main.event.model.Event;
-import ru.practicum.main.user.mapper.UserMapper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static ru.practicum.main.user.mapper.UserMapper.toUser;
+import static ru.practicum.main.user.mapper.UserMapper.toUserDto;
 
 @UtilityClass
 public class EventMapper {
@@ -25,7 +27,7 @@ public class EventMapper {
                 .createdOn(eventDto.getCreatedOn())
                 .views(eventDto.getViews())
                 .confirmedRequests(eventDto.getConfirmedRequests())
-                .initiator(UserMapper.toUser(eventDto.getInitiator()))
+                .initiator(toUser(eventDto.getInitiator()))
                 .publishedOn(eventDto.getPublishedOn())
                 .paid(eventDto.getPaid())
                 .annotation(eventDto.getAnnotation())
@@ -94,7 +96,7 @@ public class EventMapper {
                 .eventDate(event.getEventDate())
                 .category(event.getCategory())
                 .description(event.getDescription())
-                .initiator(UserMapper.toUserDto(event.getInitiator()))
+                .initiator(toUserDto(event.getInitiator()))
                 .publishedOn(event.getPublishedOn())
                 .title(event.getTitle())
                 .location(event.getLocation())
@@ -127,7 +129,7 @@ public class EventMapper {
         List<SimpleEventDto> eventDtoList = new ArrayList<>();
 
         for (Event event : eventList) {
-            eventDtoList.add(EventMapper.toSimpleEventDto(event));
+            eventDtoList.add(toSimpleEventDto(event));
         }
 
         return eventDtoList;

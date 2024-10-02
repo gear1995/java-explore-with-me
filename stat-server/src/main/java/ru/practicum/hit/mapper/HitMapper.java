@@ -7,10 +7,9 @@ import ru.practicum.hit.model.Hit;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @UtilityClass
 public class HitMapper {
-    public Hit toHit(HitDto hitDto) {
+    public static Hit toHit(HitDto hitDto) {
         if (hitDto == null) {
             return null;
         }
@@ -24,7 +23,7 @@ public class HitMapper {
                 .build();
     }
 
-    public HitDto toHitDto(Hit hit) {
+    public static HitDto toHitDto(Hit hit) {
         if (hit == null) {
             return null;
         }
@@ -36,7 +35,7 @@ public class HitMapper {
                 .build();
     }
 
-    public List<HitDto> toHitDtoList(List<Hit> hitList) {
+    public static List<HitDto> toHitDtoList(List<Hit> hitList) {
         if (hitList == null) {
             return null;
         }
