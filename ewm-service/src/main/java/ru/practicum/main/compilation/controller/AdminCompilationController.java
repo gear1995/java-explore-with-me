@@ -1,5 +1,6 @@
 package ru.practicum.main.compilation.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,10 +15,10 @@ import ru.practicum.main.compilation.service.CompilationService;
 public class AdminCompilationController {
     private final CompilationService compilationService;
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public CompilationDto createCompilation(@RequestBody CompilationDto compilationDto) {
-        log.info("Create compilation");
+    @ResponseStatus(HttpStatus.CREATED)
+    public CompilationDto createCompilation(@Valid @RequestBody CompilationDto compilationDto) {
+        log.info("Create new compilation");
         return compilationService.createCompilation(compilationDto);
     }
 

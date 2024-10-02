@@ -1,25 +1,25 @@
 services:
-  stats-server:
-    build: stats-server
-    image: stats-server
-    container_name: stats-server
+  stat-server:
+    build: stat-server
+    image: stat-server
+    container_name: stat-server
     ports:
       - "9090:9090"
     depends_on:
-      - stats-db
+      - stat-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats-db
-      - STATS-SERVER_URL=http://stats-server:9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stat-db:5432/stat-db
+      - STATS-SERVER_URL=http://stat-server:9090
       - SPRING_DATASOURCE_USERNAME=username
       - SPRING_DATASOURCE_PASSWORD=password
 
-  stats-db:
+  stat-db:
     image: postgres:16.1
     container_name: postgres
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=stats-db
+      - POSTGRES_DB=stat-db
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
     healthcheck:
@@ -35,12 +35,12 @@ services:
       - "8080:8080"
     depends_on:
       - ewm-db
-      - stats-server
+      - stat-server
     entrypoint:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
-      - STATS_SERVER_URL=http://stats-server:9090
+      - STATS_SERVER_URL=http://stat-server:9090
 
     ewm-db:
       image: postgres:16.1

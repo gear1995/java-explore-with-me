@@ -3,6 +3,7 @@ package ru.practicum.main.event.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.event.dto.*;
 import ru.practicum.main.event.model.EventState;
@@ -24,17 +25,24 @@ public class PrivateEventController {
     private final RequestService requestService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public EventDto createEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto event) {
         log.info("Creating event");
 
         if (event.getCreatedOn() == null) {
             event.setCreatedOn(LocalDateTime.now());
         }
-        if (event.getRequestModeration()) {
-            event.setRequestModeration(false);
+        if (event.getRequestModeration() == null) {
+            event.setRequestModeration(true);
         }
         if (event.getState() == null) {
             event.setState(EventState.PENDING);
+        }
+        if (event.getPaid() == null) {
+            event.setPaid(false);
+        }
+        if (event.getParticipantLimit() == null) {
+            event.setParticipantLimit(0L);
         }
 
         return eventService.createEvent(userId, event);

@@ -13,11 +13,14 @@ import lombok.Data;
 @AllArgsConstructor
 public class UserDto {
     private Long id;
-    @Size(max = 250)
-    @NotBlank
+
+    @Size(min = 2, max = 250)
+    @NotBlank(message = "User name must be not blank")
     @NotNull
     private String name;
-    @Size(max = 254)
+
+    @NotBlank(message = "User email must be not blank")
+    @Size(min = 6, max = 254)
     @Email
     private String email;
 }
