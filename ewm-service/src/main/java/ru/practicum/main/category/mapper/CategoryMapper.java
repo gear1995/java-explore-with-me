@@ -4,9 +4,12 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.main.category.dto.CategoryDto;
 import ru.practicum.main.category.model.Category;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @UtilityClass
 public class CategoryMapper {
-    public CategoryDto toCategoryDto(Category category) {
+    public static CategoryDto toCategoryDto(Category category) {
         if (category == null) {
             return null;
         }
@@ -16,7 +19,7 @@ public class CategoryMapper {
                 .build();
     }
 
-    public Category toCategory(CategoryDto categoryDto) {
+    public static Category toCategory(CategoryDto categoryDto) {
         if (categoryDto == null) {
             return null;
         }
@@ -25,5 +28,18 @@ public class CategoryMapper {
                 .id(categoryDto.getId())
                 .name(categoryDto.getName())
                 .build();
+    }
+
+    public static List<CategoryDto> toCategoryDtoList(List<Category> list) {
+        if (list == null) {
+            return null;
+        }
+
+        List<CategoryDto> categoryDtoList = new ArrayList<>();
+        for (Category category : list) {
+            categoryDtoList.add(toCategoryDto(category));
+        }
+
+        return categoryDtoList;
     }
 }
