@@ -15,7 +15,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(NotFoundException e) {
+    public ErrorResponse handleNotFoundException(final NotFoundException e) {
         log.error("Возникло исключение NotFoundException. {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
@@ -29,7 +29,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleDataBaseValidationException(DataIntegrityViolationException e) {
+    public ErrorResponse handleDataBaseValidationException(final DataIntegrityViolationException e) {
         log.error("data base validation exception. {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }

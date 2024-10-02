@@ -5,7 +5,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.main.compilation.dto.CompilationDto;
+import ru.practicum.main.compilation.dto.NewCompilationDto;
+import ru.practicum.main.compilation.model.Compilation;
 import ru.practicum.main.compilation.repository.CompilationRepository;
+import ru.practicum.main.event.model.Event;
+import ru.practicum.main.event.repository.EventRepository;
 import ru.practicum.main.exeption.NotFoundException;
 
 import java.util.List;
@@ -16,6 +20,7 @@ import static ru.practicum.main.compilation.mapper.CompilationMapper.*;
 @RequiredArgsConstructor
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
+    private final EventRepository eventRepository;
 
     @Override
     public List<CompilationDto> getCompilationsByParam(boolean pinned, int from, int size) {
@@ -30,8 +35,10 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public CompilationDto createCompilation(CompilationDto compilationDto) {
-        return toCompilationDto(compilationRepository.save(toCompilation(compilationDto)));
+    public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
+        List<Event> events = eventRepository.findAllByIdIn(newCompilationDto.getEvents());
+        Compilation compilation = toCompilation(newCompilationDto, events);
+        return toCompilationDto(compilationRepository.save(compilation));
     }
 
     @Override

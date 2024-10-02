@@ -1,10 +1,12 @@
 package ru.practicum.main.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.main.exeption.NotFoundException;
+import ru.practicum.main.exeption.ValidationException;
 import ru.practicum.main.user.dto.UserDto;
 import ru.practicum.main.user.mapper.UserMapper;
 import ru.practicum.main.user.repository.UserRepository;
@@ -31,7 +33,11 @@ class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        return toUserDto(userRepository.save(UserMapper.toUser(userDto)));
+        try {
+            return toUserDto(userRepository.save(UserMapper.toUser(userDto)));
+        } catch (DataIntegrityViolationException e) {
+            throw new ValidationException(e.getMessage());
+        }
     }
 
     @Override

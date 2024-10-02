@@ -22,6 +22,7 @@ public class AdminCategoryController {
         return categoryService.createCategory(categoryDto);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("{catId}")
     public void deleteCategory(@PathVariable("catId") long catId) {
         log.info("Delete category with id: {}", catId);

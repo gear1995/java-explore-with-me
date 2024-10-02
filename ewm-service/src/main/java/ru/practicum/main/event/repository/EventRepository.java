@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.practicum.main.event.model.Event;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,4 +16,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);
 
     Optional<Event> findByIdAndPublishedOnIsNotNull(Long id);
+
+    List<Event> findAllByIdIn(List<Long> events);
+
+    boolean existsByCategoryId(long catId);
 }

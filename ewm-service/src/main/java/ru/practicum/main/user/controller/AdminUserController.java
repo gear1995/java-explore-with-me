@@ -34,8 +34,9 @@ public class AdminUserController {
         return userService.createUser(userDto);
     }
 
-    @DeleteMapping({"userId"})
-    public void deleteUser(@RequestParam Long userId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("{userId}")
+    public void deleteUser(@PathVariable Long userId) {
         log.info("Deleting user");
 
         userService.deleteUSerById(userId);
