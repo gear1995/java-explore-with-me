@@ -22,14 +22,14 @@ public class AdminCategoryController {
         return categoryService.createCategory(categoryDto);
     }
 
-    @DeleteMapping({"catId"})
-    public void deleteCategory(@RequestParam("catId") long catId) {
+    @DeleteMapping("{catId}")
+    public void deleteCategory(@PathVariable("catId") long catId) {
         log.info("Delete category with id: {}", catId);
         categoryService.deleteCategoryById(catId);
     }
 
-    @PatchMapping({"catId"})
-    public CategoryDto updateCategory(@RequestParam long catId,
+    @PatchMapping("{catId}")
+    public CategoryDto updateCategory(@PathVariable long catId,
                                       @Valid @RequestBody CategoryDto categoryDto) {
         log.info("Update category with id: {}", catId);
         return categoryService.updateCategory(catId, categoryDto);

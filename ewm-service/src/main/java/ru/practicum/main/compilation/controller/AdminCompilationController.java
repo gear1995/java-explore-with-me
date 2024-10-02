@@ -22,14 +22,14 @@ public class AdminCompilationController {
         return compilationService.createCompilation(compilationDto);
     }
 
-    @DeleteMapping({"compId"})
+    @DeleteMapping("{compId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompilationById(@RequestParam long compId) {
         log.info("Delete compilation by id: {}", compId);
         compilationService.deleteCompilationById(compId);
     }
 
-    @PatchMapping({"compId"})
+    @PatchMapping("{compId}")
     public CompilationDto updateCompilationById(@RequestParam long compId,
                                                 @RequestBody CompilationDto compilationDto) {
         log.info("Update compilation with id {}", compId);
