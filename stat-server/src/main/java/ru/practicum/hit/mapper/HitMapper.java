@@ -4,9 +4,6 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.dto.HitDto;
 import ru.practicum.hit.model.Hit;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @UtilityClass
 public class HitMapper {
     public static Hit toHit(HitDto hitDto) {
@@ -15,11 +12,10 @@ public class HitMapper {
         }
 
         return Hit.builder()
-                .id(hitDto.getId())
                 .app(hitDto.getApp())
                 .uri(hitDto.getUri())
                 .ip(hitDto.getIp())
-                .queried(hitDto.getQueried())
+                .queried(hitDto.getTimestamp())
                 .build();
     }
 
@@ -29,22 +25,10 @@ public class HitMapper {
         }
 
         return HitDto.builder()
-                .id(hit.getId())
                 .app(hit.getApp())
                 .uri(hit.getUri())
+                .ip(hit.getIp())
+                .timestamp(hit.getQueried())
                 .build();
-    }
-
-    public static List<HitDto> toHitDtoList(List<Hit> hitList) {
-        if (hitList == null) {
-            return null;
-        }
-        List<HitDto> hitDtoList = new ArrayList<>();
-
-        for (Hit hit : hitList) {
-            hitDtoList.add(toHitDto(hit));
-        }
-
-        return hitDtoList;
     }
 }
