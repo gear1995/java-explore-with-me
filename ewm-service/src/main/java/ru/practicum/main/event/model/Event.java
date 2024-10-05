@@ -38,16 +38,24 @@ public class Event {
     @OneToOne
     @JoinColumn(name = "initiator_id", referencedColumnName = "id")
     private User initiator;
+
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
+
     private Boolean paid;
+
     @JoinColumn(name = "participant_limit")
     private Long participantLimit;
+
     @JoinColumn(name = "published_on")
     private LocalDateTime publishedOn;
+
     @JoinColumn(name = "request_moderation")
+
     private Boolean requestModeration;
+
+    @Enumerated(EnumType.STRING)
     private EventState state;
     private String title;
     private Long views;

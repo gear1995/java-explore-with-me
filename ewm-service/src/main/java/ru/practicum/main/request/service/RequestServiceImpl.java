@@ -49,7 +49,7 @@ public class RequestServiceImpl implements RequestService {
 
         Request request = Request.builder()
                 .created(LocalDateTime.now())
-                .status(RequestStatus.PENDING)
+                .status(RequestStatus.CONFIRMED)
                 .requester(userId)
                 .event(eventId)
                 .build();
@@ -90,11 +90,13 @@ public class RequestServiceImpl implements RequestService {
 
         if (requestsToUpdate
                 .stream()
-                .anyMatch(request -> request.getStatus().equals(RequestStatus.CONFIRMED) && requestStatusUpdateDto.getStatus().equals(RequestStatus.REJECTED))) {
+                .anyMatch(request -> request.getStatus().equals(RequestStatus.CONFIRMED)
+                                     && requestStatusUpdateDto.getStatus().equals(RequestStatus.REJECTED))) {
             throw new ValidationException("Request already confirmed");
         }
 
-        if (event.getConfirmedRequests() + requestsToUpdate.size() > event.getParticipantLimit() && requestStatusUpdateDto.getStatus().equals(RequestStatus.CONFIRMED)) {
+        if (event.getConfirmedRequests() + requestsToUpdate.size() > event.getParticipantLimit()
+            && requestStatusUpdateDto.getStatus().equals(RequestStatus.CONFIRMED)) {
             throw new ValidationException("Exceeding the limit of participants");
         }
 

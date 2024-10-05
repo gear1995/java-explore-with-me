@@ -2,10 +2,7 @@ package ru.practicum.main.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,7 +42,7 @@ public class NewEventDto {
 
     private Boolean paid;
 
-    @Positive
+    @PositiveOrZero(message = "participantLimit must be zero or positive")
     private Long participantLimit;
 
     private Boolean requestModeration;
@@ -53,6 +50,4 @@ public class NewEventDto {
     @NotNull
     @Size(min = 3, max = 120)
     private String title;
-
-    private EventState stateAction;
 }

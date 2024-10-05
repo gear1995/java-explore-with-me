@@ -1,19 +1,21 @@
 package ru.practicum.main.event.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import ru.practicum.main.event.dto.*;
 import ru.practicum.main.event.model.Event;
 import ru.practicum.main.event.model.EventState;
 import ru.practicum.main.event.model.SortValue;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
     List<EventDto> getEventsByParam(List<Long> users,
                                     EventState states,
                                     List<Long> categories,
-                                    String rangeStart,
-                                    String rangeEnd,
+                                    LocalDateTime rangeStart,
+                                    LocalDateTime rangeEnd,
                                     Integer from,
                                     Integer size);
 
@@ -27,11 +29,11 @@ public interface EventService {
 
     EventDto updateEventById(Long userId, Long eventId, UpdateEventByUserDto newEventDto);
 
-    List<EventDto> getPublicEventsByParam(String text,
+    List<SimpleEventDto> getPublicEventsByParam(String text,
                                           List<Long> categories,
                                           Boolean paid,
-                                          String rangeStart,
-                                          String rangeEnd,
+                                          LocalDateTime rangeStart,
+                                          LocalDateTime rangeEnd,
                                           Boolean onlyAvailable,
                                           SortValue sort,
                                           Integer from,
@@ -39,5 +41,5 @@ public interface EventService {
 
     EventDto getPublicEventById(Long eventId, HttpServletRequest request);
 
-    EventDto updateEvent(Long eventId, UpdateEventDto updateEventAdminDto);
+    EventDto updateEvent(Long eventId, @Valid UpdateEventByAdminDto updateEventAdminDto);
 }

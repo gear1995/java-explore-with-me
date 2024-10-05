@@ -3,12 +3,11 @@ package ru.practicum.main.event.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.main.event.model.AdminStateAction;
 import ru.practicum.main.event.model.Location;
 import ru.practicum.main.event.model.UserStateAction;
 
@@ -42,7 +41,7 @@ public class UpdateEventByUserDto {
 
     private Boolean paid;
 
-    @Positive
+    @PositiveOrZero
     private Long participantLimit;
 
     private Boolean requestModeration;
