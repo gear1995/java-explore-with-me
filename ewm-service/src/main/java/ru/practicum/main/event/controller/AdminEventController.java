@@ -32,7 +32,7 @@ public class AdminEventController {
                                            @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeEnd,
                                            @RequestParam(required = false, defaultValue = "0") Integer from,
                                            @RequestParam(required = false, defaultValue = "10") Integer size) {
-        log.info("Get events by param");
+        log.info("Get events by admin with params");
         if (rangeStart == null) {
             rangeStart = LocalDateTime.now();
         }
@@ -42,7 +42,7 @@ public class AdminEventController {
     @PatchMapping("{eventId}")
     public EventDto updateEvent(@PathVariable Long eventId,
                                 @RequestBody @Valid UpdateEventByAdminDto updateEventByAdminDto) {
-        log.info("Update event");
+        log.info("Update event with id: {} by admin", eventId);
         return eventService.updateEvent(eventId, updateEventByAdminDto);
     }
 }
