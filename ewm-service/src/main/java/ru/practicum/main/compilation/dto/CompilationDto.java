@@ -1,15 +1,13 @@
 package ru.practicum.main.compilation.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.validator.constraints.UniqueElements;
-import ru.practicum.main.event.model.Event;
+import ru.practicum.main.event.dto.SimpleEventDto;
 
-import java.util.Set;
+import java.util.List;
 
 @Builder
 @Data
@@ -17,7 +15,7 @@ import java.util.Set;
 public class CompilationDto {
     private Long id;
 
-    private Set<Event> events;
+    private List<SimpleEventDto> events;
 
     private Boolean pinned;
 

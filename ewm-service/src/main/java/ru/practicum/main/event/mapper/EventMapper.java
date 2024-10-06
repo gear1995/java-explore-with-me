@@ -11,36 +11,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.practicum.main.user.mapper.UserMapper.toUser;
 import static ru.practicum.main.user.mapper.UserMapper.toUserDto;
 
 @UtilityClass
 public class EventMapper {
-    public static Event toEvent(EventDto eventDto) {
-        if (eventDto == null) {
-            return null;
-        }
-
-        return Event.builder()
-                .id(eventDto.getId())
-                .eventDate(eventDto.getEventDate())
-                .createdOn(eventDto.getCreatedOn())
-                .views(eventDto.getViews())
-                .confirmedRequests(eventDto.getConfirmedRequests())
-                .initiator(toUser(eventDto.getInitiator()))
-                .publishedOn(eventDto.getPublishedOn())
-                .paid(eventDto.getPaid())
-                .annotation(eventDto.getAnnotation())
-                .description(eventDto.getDescription())
-                .requestModeration(eventDto.getRequestModeration())
-                .category(eventDto.getCategory())
-                .location(eventDto.getLocation())
-                .participantLimit(eventDto.getParticipantLimit())
-                .state(eventDto.getStateAction())
-                .title(eventDto.getTitle())
-                .build();
-    }
-
     public static Event toEvent(NewEventDto newEventDto, Category category) {
         if (newEventDto == null) {
             return null;
@@ -58,27 +32,6 @@ public class EventMapper {
                 .title(newEventDto.getTitle())
                 .createdOn(LocalDateTime.now())
                 .state(newEventDto.getState())
-                .build();
-    }
-
-    public static Event toEvent(SimpleEventDto eventDto) {
-        if (eventDto == null) {
-            return null;
-        }
-
-        return Event.builder()
-                .id(eventDto.getId())
-                .eventDate(eventDto.getEventDate())
-                .state(eventDto.getStateAction())
-                .paid(eventDto.getPaid())
-                .annotation(eventDto.getAnnotation())
-                .description(eventDto.getDescription())
-                .requestModeration(eventDto.getRequestModeration())
-                .category(eventDto.getCategory())
-                .location(eventDto.getLocation())
-                .participantLimit(eventDto.getParticipantLimit())
-                .state(eventDto.getStateAction())
-                .title(eventDto.getTitle())
                 .build();
     }
 
@@ -107,20 +60,6 @@ public class EventMapper {
                 .build();
     }
 
-    public static List<EventDto> toEventDtoList(List<Event> events) {
-        if (events == null) {
-            return null;
-        }
-
-        List<EventDto> eventDtoList = new ArrayList<>();
-
-        for (Event event : events) {
-            eventDtoList.add(toEventDto(event));
-        }
-
-        return eventDtoList;
-    }
-
     public static List<SimpleEventDto> toSimpleEventDtoList(List<Event> eventList) {
         if (eventList == null) {
             return null;
@@ -147,6 +86,10 @@ public class EventMapper {
                 .description(event.getDescription())
                 .title(event.getTitle())
                 .location(event.getLocation())
+                .eventDate(event.getEventDate())
+                .initiator(event.getInitiator())
+                .views(event.getViews())
+                .confirmedRequests(event.getConfirmedRequests())
                 .paid(event.getPaid())
                 .build();
     }

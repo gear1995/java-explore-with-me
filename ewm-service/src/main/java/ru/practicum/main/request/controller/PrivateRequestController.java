@@ -29,8 +29,8 @@ public class PrivateRequestController {
     }
 
     @PatchMapping("{requestId}/cancel")
-    public RequestDto cancelRequest(@PathVariable Long userId, @RequestParam Long eventId, @PathVariable Long requestId) {
+    public RequestDto cancelRequest(@PathVariable Long userId, @PathVariable Long requestId) {
         log.info("Cancel request with id {}", requestId);
-        return requestService.cancelRequestToEventByOwner(userId, eventId, requestId);
+        return requestService.cancelRequestToEventByOwner(userId, requestId);
     }
 }

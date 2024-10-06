@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.main.request.model.Request;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
@@ -20,4 +21,6 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
                                               @Param("eventId") Long eventId);
 
     List<Request> findAllByRequester(Long userId);
+
+    Optional<Request> findByEventAndRequester(Long userId, Long eventId);
 }

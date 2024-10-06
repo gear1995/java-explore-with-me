@@ -1,9 +1,7 @@
 package ru.practicum.main.event.service;
 
-import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +16,7 @@ import ru.practicum.main.event.mapper.EventMapper;
 import ru.practicum.main.event.model.*;
 import ru.practicum.main.event.repository.EventRepository;
 import ru.practicum.main.exeption.NotFoundException;
+import ru.practicum.main.exeption.ValidationException;
 import ru.practicum.main.statistics.StatisticsService;
 import ru.practicum.main.user.model.User;
 import ru.practicum.main.user.repository.UserRepository;
@@ -33,7 +32,6 @@ import static ru.practicum.main.utils.Constants.DATE_TIME_FORMATTER;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final EntityManager entityManager;
     private final StatisticsService statisticsService;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
@@ -47,7 +45,7 @@ public class EventServiceImpl implements EventService {
                                            Integer from,
                                            Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        return eventRepository.getAllUsersEvents(usersId, categoriesId, states, rangeStart, rangeEnd, pageable)
+        return eventRepository.findUsersEventsByParams(usersId, categoriesId, states, rangeStart, rangeEnd, pageable)
                 .stream()
                 .map(event -> {
                     statisticsService.setView(event);
@@ -92,6 +90,7 @@ public class EventServiceImpl implements EventService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
         event.setInitiator(user);
+        event.setConfirmedRequests(0L);
 
         return toEventDto(eventRepository.save(event));
     }
@@ -121,7 +120,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException(String.format("Event with id %s or user with id %s not found", eventId, userId)));
 
         if (event.getPublishedOn() != null) {
-            throw new DataIntegrityViolationException("Event is published, update denied");
+            throw new ValidationException("Event is published, update denied");
         }
 
         if (eventDto == null) {
@@ -129,6 +128,11 @@ public class EventServiceImpl implements EventService {
         }
 
         if (eventDto.getAnnotation() != null) {
+            int annotationLength = eventDto.getAnnotation().length();
+            if (annotationLength < 20 || annotationLength > 7000) {
+                throw new DataIntegrityViolationException(String.format("Annotation length: %d mus be in interval 20...7000",
+                        annotationLength));
+            }
             event.setAnnotation(eventDto.getAnnotation());
         }
         if (eventDto.getCategory() != null) {
@@ -137,6 +141,11 @@ public class EventServiceImpl implements EventService {
             event.setCategory(category);
         }
         if (eventDto.getDescription() != null) {
+            int descriptionLength = eventDto.getDescription().length();
+            if (descriptionLength < 20 || descriptionLength > 7000) {
+                throw new DataIntegrityViolationException(String.format("Description length: %d mus be in interval 20...7000",
+                        descriptionLength));
+            }
             event.setDescription(eventDto.getDescription());
         }
         if (eventDto.getEventDate() != null) {
@@ -165,6 +174,10 @@ public class EventServiceImpl implements EventService {
             event.setRequestModeration(eventDto.getRequestModeration());
         }
         if (eventDto.getTitle() != null) {
+            int titleLength = eventDto.getTitle().length();
+            if (titleLength < 3 || titleLength > 120) {
+                throw new DataIntegrityViolationException(String.format("Title length: %d mus be in interval 3...120", titleLength));
+            }
             event.setTitle(eventDto.getTitle());
         }
 
@@ -188,7 +201,8 @@ public class EventServiceImpl implements EventService {
                                                        Boolean onlyAvailable,
                                                        SortValue sort,
                                                        Integer from,
-                                                       Integer size, HttpServletRequest request) {
+                                                       Integer size,
+                                                       HttpServletRequest request) {
         String sorting;
         if (sort.equals(SortValue.EVENT_DATE)) {
             sorting = "eventDate";
@@ -198,12 +212,13 @@ public class EventServiceImpl implements EventService {
             sorting = "id";
         }
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(sorting));
-        List<Event> sortedEvents = eventRepository.getFilterEvents(text, categories, paid, rangeStart, rangeEnd, pageable);
+        List<Event> sortedEvents = eventRepository.findEventsByParams(text, categories, paid, rangeStart, rangeEnd, pageable);
         if (onlyAvailable) {
             sortedEvents.removeIf(event -> Objects.equals(event.getConfirmedRequests(), event.getParticipantLimit()));
         }
         statisticsService.sendStat(sortedEvents, request);
         eventRepository.saveAll(sortedEvents);
+
         return toSimpleEventDtoList(sortedEvents);
     }
 
@@ -219,7 +234,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventDto updateEvent(Long eventId, @Valid UpdateEventByAdminDto updateEventDto) {
+    public EventDto updateEvent(Long eventId, UpdateEventByAdminDto updateEventDto) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException(String.format("Event with id %s not found", eventId)));
 
@@ -256,25 +271,28 @@ public class EventServiceImpl implements EventService {
         if (updateEventDto.getStateAction() != null) {
             if (updateEventDto.getStateAction().equals(AdminStateAction.PUBLISH_EVENT)) {
                 if (event.getPublishedOn() != null) {
-                    throw new DataIntegrityViolationException("Event is already published");
+                    throw new ValidationException("Event is already published");
                 }
                 if (event.getState().equals(EventState.CANCELED)) {
-                    throw new DataIntegrityViolationException("Event is already canceled");
+                    throw new ValidationException("Event is already canceled");
                 }
                 event.setState(EventState.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
             } else if (updateEventDto.getStateAction().equals(AdminStateAction.REJECT_EVENT)) {
                 if (event.getPublishedOn() != null) {
-                    throw new DataIntegrityViolationException("Event is already published");
+                    throw new ValidationException("Event is already published");
                 }
                 event.setState(EventState.CANCELED);
             }
         }
         if (updateEventDto.getEventDate() != null) {
-            LocalDateTime eventDateTime = updateEventDto.getEventDate();
-            if (eventDateTime.isBefore(LocalDateTime.now()) || eventDateTime.isBefore(event.getEventDate().plusHours(1))) {
-                throw new DataIntegrityViolationException("The start date of the event to be modified is less " +
-                                                          "than one hour from the publication date.");
+            LocalDateTime updateEventDate = updateEventDto.getEventDate();
+            if (updateEventDate.isBefore(LocalDateTime.now())) {
+                throw new DataIntegrityViolationException("Update event date must be before current moment.");
+            }
+            if (event.getPublishedOn() != null && updateEventDate.isBefore(event.getPublishedOn().plusHours(1))) {
+                throw new DataIntegrityViolationException("The start date of the modified event must be no earlier" +
+                                                          " than an hour from the publication date");
             }
             event.setEventDate(updateEventDto.getEventDate());
         }

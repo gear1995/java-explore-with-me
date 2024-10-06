@@ -30,11 +30,14 @@ public class AdminEventController {
                                            @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeStart,
                                            @RequestParam(required = false)
                                            @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeEnd,
-                                           @RequestParam(required = false, defaultValue = "0") Integer from,
-                                           @RequestParam(required = false, defaultValue = "10") Integer size) {
+                                           @RequestParam(defaultValue = "0") Integer from,
+                                           @RequestParam(defaultValue = "10") Integer size) {
         log.info("Get events by admin with params");
         if (rangeStart == null) {
             rangeStart = LocalDateTime.now();
+        }
+        if (rangeEnd == null) {
+            rangeEnd = LocalDateTime.now().plusYears(999);
         }
         return eventService.getEventsByParam(users, states, categories, rangeStart, rangeEnd, from, size);
     }

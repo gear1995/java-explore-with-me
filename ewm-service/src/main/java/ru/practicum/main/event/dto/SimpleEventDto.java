@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.main.category.model.Category;
 import ru.practicum.main.event.model.EventState;
 import ru.practicum.main.event.model.Location;
+import ru.practicum.main.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,9 @@ public class SimpleEventDto {
     @NotNull
     @Size(min = 20, max = 2000)
     private String annotation;
+    private User initiator;
+    private Long views;
+    private Long confirmedRequests;
     @NotNull
     private Category category;
     @NotNull

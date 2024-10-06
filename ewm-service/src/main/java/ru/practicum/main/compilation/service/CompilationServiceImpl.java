@@ -1,6 +1,7 @@
 package ru.practicum.main.compilation.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,11 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public List<CompilationDto> getCompilationsByParam(boolean pinned, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        return toCompilationDtoList(compilationRepository.getByPinnedOrderByPinnedAsc(pinned, pageable));
+        if (pinned) {
+            return toCompilationDtoList(compilationRepository.getByPinnedOrderByPinnedAsc(true, pageable));
+        } else {
+            return toCompilationDtoList(compilationRepository.findAll(pageable).toList());
+        }
     }
 
     @Override
@@ -50,10 +55,24 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public CompilationDto updateCompilationById(long compId, CompilationDto compilationDto) {
-        compilationRepository.findById(compId)
+    public CompilationDto updateCompilationById(long compId, NewCompilationDto newCompilationDto) {
+        Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation with id " + compId + " not found"));
+        if (newCompilationDto.getEvents() != null) {
+            List<Event> events = eventRepository.findAllByIdIn(newCompilationDto.getEvents());
+            compilation.setEvents(events);
+        }
+        if (newCompilationDto.getPinned() != null) {
+            compilation.setPinned(newCompilationDto.getPinned());
+        }
+        if (newCompilationDto.getTitle() != null) {
+            int titleLength = newCompilationDto.getTitle().length();
+            if (titleLength < 1 || titleLength > 50) {
+                throw new DataIntegrityViolationException("Title length must be in interval 1...50");
+            }
+            compilation.setTitle(newCompilationDto.getTitle());
+        }
 
-        return toCompilationDto(compilationRepository.save(toCompilation(compilationDto)));
+        return toCompilationDto(compilationRepository.save(compilation));
     }
 }

@@ -4,6 +4,7 @@ import ru.practicum.main.request.dto.RequestDto;
 import ru.practicum.main.request.dto.RequestStatusDto;
 import ru.practicum.main.request.dto.RequestStatusUpdateDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface RequestService {
@@ -15,5 +16,5 @@ public interface RequestService {
 
     List<RequestDto> getCurrentUserRequests(Long userId);
 
-    RequestDto cancelRequestToEventByOwner(Long userId, Long eventId, Long requestId);
+    RequestDto cancelRequestToEventByOwner(Long userId, Long requestId);
 }

@@ -14,5 +14,5 @@ public interface CompilationService {
 
     void deleteCompilationById(long compId);
 
-    CompilationDto updateCompilationById(long compId, CompilationDto compilationDto);
+    CompilationDto updateCompilationById(long compId, NewCompilationDto compilationDto);
 }

@@ -33,23 +33,32 @@ public class RequestServiceImpl implements RequestService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id " + eventId + " not found"));
 
+        requestRepository.findByEventAndRequester(eventId, userId).ifPresent(request -> {
+            throw new ValidationException("Can't repeated request");
+        });
+
         if (event.getInitiator().getId().equals(userId)) {
-            throw new NotFoundException("Can't create request by initiator");
+            throw new ValidationException("Can't create request by initiator");
         }
 
         if (event.getPublishedOn() == null) {
-            throw new NotFoundException("Event is not published yet");
+            throw new ValidationException("Event is not published yet");
         }
 
         List<Request> requests = requestRepository.findAllByEvent(eventId);
 
         if (!event.getRequestModeration() && requests.size() >= event.getParticipantLimit()) {
-            throw new NotFoundException("Member limit exceeded");
+            throw new ValidationException("Member limit exceeded");
+        }
+        RequestStatus requestStatus = RequestStatus.PENDING;
+
+        if (event.getRequestModeration().equals(false) || event.getParticipantLimit() == 0) {
+            requestStatus = RequestStatus.CONFIRMED;
         }
 
         Request request = Request.builder()
                 .created(LocalDateTime.now())
-                .status(RequestStatus.CONFIRMED)
+                .status(requestStatus)
                 .requester(userId)
                 .event(eventId)
                 .build();
@@ -132,15 +141,13 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public RequestDto cancelRequestToEventByOwner(Long userId, Long eventId, Long requestId) {
+    public RequestDto cancelRequestToEventByOwner(Long userId, Long requestId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found"));
 
-        eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id " + eventId + " not found"));
-
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Request with id " + requestId + " not found"));
+
         request.setStatus(RequestStatus.CANCELED);
 
         return toRequestDto(requestRepository.save(request));

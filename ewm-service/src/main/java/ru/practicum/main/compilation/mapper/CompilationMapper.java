@@ -7,30 +7,19 @@ import ru.practicum.main.compilation.model.Compilation;
 import ru.practicum.main.event.model.Event;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+
+import static ru.practicum.main.event.mapper.EventMapper.toSimpleEventDtoList;
 
 @UtilityClass
 public class CompilationMapper {
-    public static Compilation toCompilation(final CompilationDto compilationDto) {
-        if (compilationDto == null) {
-            return null;
-        }
-        return Compilation.builder()
-                .id(compilationDto.getId())
-                .title(compilationDto.getTitle())
-                .events(compilationDto.getEvents())
-                .pinned(compilationDto.getPinned())
-                .build();
-    }
-
     public static Compilation toCompilation(final NewCompilationDto newCompilationDto, final List<Event> events) {
         if (newCompilationDto == null) {
             return null;
         }
 
         return Compilation.builder()
-                .events(new HashSet<>(events))
+                .events(events)
                 .pinned(newCompilationDto.getPinned())
                 .title(newCompilationDto.getTitle())
                 .build();
@@ -43,7 +32,7 @@ public class CompilationMapper {
         return CompilationDto.builder()
                 .id(compilation.getId())
                 .title(compilation.getTitle())
-                .events(compilation.getEvents())
+                .events(toSimpleEventDtoList(compilation.getEvents()))
                 .pinned(compilation.getPinned())
                 .build();
     }

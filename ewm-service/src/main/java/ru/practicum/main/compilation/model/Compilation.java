@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.main.event.model.Event;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Builder
@@ -26,5 +26,5 @@ public class Compilation {
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     @OrderBy("eventDate")
-    private Set<Event> events;
+    private List<Event> events;
 }
