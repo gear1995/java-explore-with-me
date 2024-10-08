@@ -28,6 +28,16 @@ services:
       interval: 5s
       retries: 10
 
+  ewm-db:
+    image: postgres:16.1
+    container_name: ewm-db
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=ewm
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+
   ewm-service:
     build: ewm-service
     image: ewm-service
@@ -41,13 +51,3 @@ services:
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
       - STATS_SERVER_URL=http://stat-server:9090
-
-    ewm-db:
-      image: postgres:16.1
-      container_name: ewm-db
-      ports:
-        - "6541:5432"
-      environment:
-        - POSTGRES_DB=ewm
-        - POSTGRES_USER=username
-        - POSTGRES_PASSWORD=password
