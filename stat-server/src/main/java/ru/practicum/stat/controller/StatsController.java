@@ -11,6 +11,7 @@ import ru.practicum.dto.StatDto;
 import ru.practicum.stat.service.StatsService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,10 +34,14 @@ public class StatsController {
             throw new IllegalArgumentException("End date is before start date");
         }
 
-        if (uris != null && uris.isEmpty()) {
-            uris = null;
+        if (uris != null) {
+            List<String> obtainUris = new ArrayList<>();
+            for (String uri : uris) {
+                obtainUris.add(uri.replaceAll("\\[|\\]", ""));
+            }
+            return statsService.getStats(start, end, obtainUris, unique);
+        } else {
+            return statsService.getStats(start, end, null, unique);
         }
-
-        return statsService.getStats(start, end, uris, unique);
     }
 }

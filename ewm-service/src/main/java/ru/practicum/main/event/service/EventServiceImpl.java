@@ -73,7 +73,7 @@ public class EventServiceImpl implements EventService {
         String startTime = start.format(DATE_TIME_FORMATTER);
         String endTime = LocalDateTime.now().format(DATE_TIME_FORMATTER);
 
-        List<StatDto> stats = statisticsService.getStats(startTime, endTime, uris);
+        List<StatDto> stats = statisticsService.getStats(startTime, endTime, uris, true);
         stats.forEach(stat -> eventsUri.get(stat.getUri()).setViews(stat.getHits()));
     }
 

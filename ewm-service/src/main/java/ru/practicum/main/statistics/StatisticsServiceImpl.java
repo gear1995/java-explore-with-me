@@ -89,7 +89,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         String endTime = LocalDateTime.now().format(DATE_TIME_FORMATTER);
         List<String> uris = List.of("/events/" + event.getId());
 
-        List<StatDto> stats = getStats(startTime, endTime, uris);
+        List<StatDto> stats = getStats(startTime, endTime, uris, true);
         if (!stats.isEmpty()) {
             event.setViews(stats.getFirst().getHits());
         } else {
@@ -98,7 +98,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public List<StatDto> getStats(String startTime, String endTime, List<String> uris) {
-        return statClient.getStat(startTime, endTime, uris, false);
+    public List<StatDto> getStats(String startTime, String endTime, List<String> uris, Boolean unique) {
+        return statClient.getStat(startTime, endTime, uris, unique);
     }
 }

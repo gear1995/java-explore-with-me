@@ -20,5 +20,5 @@ public interface StatisticsService {
 
     void setView(Event event);
 
-    List<StatDto> getStats(String startTime, String endTime, List<String> uris);
+    List<StatDto> getStats(String startTime, String endTime, List<String> uris, Boolean unique);
 }
