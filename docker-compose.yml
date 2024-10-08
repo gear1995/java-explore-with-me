@@ -17,7 +17,7 @@ services:
     image: postgres:16.1
     container_name: postgres
     ports:
-      - "6541:5432"
+      - "6540:5432"
     environment:
       - POSTGRES_DB=stat-db
       - POSTGRES_USER=username
