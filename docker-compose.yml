@@ -46,7 +46,7 @@ services:
     depends_on:
       - ewm-db
       - stat-server
-    entrypoint:
+    environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
