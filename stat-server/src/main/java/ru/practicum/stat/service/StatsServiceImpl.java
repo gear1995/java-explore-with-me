@@ -3,9 +3,9 @@ package ru.practicum.stat.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.StatDto;
-import ru.practicum.stat.model.Stat;
 import ru.practicum.stat.repository.StatsRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,11 +14,11 @@ public class StatsServiceImpl implements StatsService {
     private final StatsRepository statsRepository;
 
     @Override
-    public List<StatDto> getStats(Stat stat) {
-        if (stat.isUnique()) {
-            return statsRepository.getUniqueStatByParam(stat.getStart(), stat.getEnd(), stat.getUris());
+    public List<StatDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (unique) {
+            return statsRepository.getUniqueStatByParam(start, end, uris);
         } else {
-            return statsRepository.getAllStatByParam(stat.getStart(), stat.getEnd(), stat.getUris());
+            return statsRepository.getAllStatByParam(start, end, uris);
         }
     }
 }

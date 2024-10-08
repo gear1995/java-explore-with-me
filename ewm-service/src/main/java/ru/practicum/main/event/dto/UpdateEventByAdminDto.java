@@ -26,6 +26,7 @@ public class UpdateEventByAdminDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     private LocalDateTime createdOn;
     private Location location;
     private Boolean paid;

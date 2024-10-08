@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.dto.StatDto;
-import ru.practicum.stat.model.Stat;
 import ru.practicum.stat.service.StatsService;
 
 import java.time.LocalDateTime;
@@ -23,25 +22,21 @@ public class StatsController {
 
     @GetMapping
     public List<StatDto> getStats(@RequestParam
-                                  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                  LocalDateTime start,
+                                  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                   @RequestParam
                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                   @RequestParam(required = false) List<String> uris,
                                   @RequestParam(defaultValue = "false") boolean unique) {
         log.info("Getting stats");
 
+        if (end.isBefore(start)) {
+            throw new IllegalArgumentException("End date is before start date");
+        }
+
         if (uris != null && uris.isEmpty()) {
             uris = null;
         }
 
-        return statsService.getStats(
-                Stat.builder()
-                        .start(start)
-                        .end(end)
-                        .uris(uris)
-                        .unique(unique)
-                        .build()
-        );
+        return statsService.getStats(start, end, uris, unique);
     }
 }

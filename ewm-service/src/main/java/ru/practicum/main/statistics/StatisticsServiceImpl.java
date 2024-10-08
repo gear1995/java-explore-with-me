@@ -27,8 +27,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         HitDto requestDto = HitDto.builder()
                 .app(nameService)
                 .uri("/events")
-                .timestamp(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER), DATE_TIME_FORMATTER))
                 .ip(remoteAddr)
+                .timestamp(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER), DATE_TIME_FORMATTER))
                 .build();
 
         statClient.createHit(requestDto);
@@ -52,30 +52,34 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public void sendStatForTheEvent(Long eventId, String remoteAddr, LocalDateTime now,
+    public void sendStatForTheEvent(Long eventId,
+                                    String remoteAddr,
+                                    LocalDateTime now,
                                     String nameService) {
-        HitDto requestDto = HitDto.builder()
+        HitDto requestHitDto = HitDto.builder()
                 .app(nameService)
                 .uri("/events/" + eventId)
                 .ip(remoteAddr)
                 .timestamp(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER), DATE_TIME_FORMATTER))
                 .build();
 
-        statClient.createHit(requestDto);
+        statClient.createHit(requestHitDto);
     }
 
     @Override
-    public void sendStatForEveryEvent(List<Event> events, String remoteAddr, LocalDateTime now,
+    public void sendStatForEveryEvent(List<Event> events,
+                                      String remoteAddr,
+                                      LocalDateTime now,
                                       String nameService) {
         for (Event event : events) {
-            HitDto requestDto = HitDto.builder()
+            HitDto requestHitDto = HitDto.builder()
                     .uri("/events/" + event.getId())
                     .app(nameService)
                     .ip(remoteAddr)
                     .timestamp(LocalDateTime.parse(now.format(DATE_TIME_FORMATTER), DATE_TIME_FORMATTER))
                     .build();
 
-            statClient.createHit(requestDto);
+            statClient.createHit(requestHitDto);
         }
     }
 
@@ -86,7 +90,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<String> uris = List.of("/events/" + event.getId());
 
         List<StatDto> stats = getStats(startTime, endTime, uris);
-        if (stats.size() == 1) {
+        if (!stats.isEmpty()) {
             event.setViews(stats.getFirst().getHits());
         } else {
             event.setViews(0L);

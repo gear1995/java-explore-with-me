@@ -36,6 +36,7 @@ public class EventDto {
     private Long confirmedRequests;
     private LocalDateTime createdOn;
     private UserDto initiator;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     private LocalDateTime publishedOn;
     private Long views;
     private EventState state;
