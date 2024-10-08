@@ -1,7 +1,10 @@
 package ru.practicum.main.event.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.main.category.model.Category;
 import ru.practicum.main.user.model.User;
 

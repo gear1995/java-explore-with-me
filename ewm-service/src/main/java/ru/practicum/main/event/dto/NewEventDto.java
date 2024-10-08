@@ -2,7 +2,10 @@ package ru.practicum.main.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
