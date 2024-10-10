@@ -9,7 +9,7 @@ services:
       - stat-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stat-db:5432/stat-db
-      - STATS-SERVER_URL=http://stat-server:9090
+      - STAT-SERVER_URL=http://stat-server:9090
       - SPRING_DATASOURCE_USERNAME=username
       - SPRING_DATASOURCE_PASSWORD=password
 
@@ -50,4 +50,4 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
-      - STATS_SERVER_URL=http://stat-server:9090
+      - STAT_SERVER_URL=http://stat-server:9090
