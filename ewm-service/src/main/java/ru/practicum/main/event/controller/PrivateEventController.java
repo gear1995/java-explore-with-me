@@ -30,7 +30,7 @@ public class PrivateEventController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventDto createEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto event) {
-        log.info("Creating event");
+        log.info("Creating event by user with id {}", userId);
 
         if (event.getCreatedOn() == null) {
             event.setCreatedOn(LocalDateTime.now());
@@ -75,7 +75,7 @@ public class PrivateEventController {
 
     @GetMapping("{eventId}/requests")
     public List<RequestDto> getRequestsByEventOwner(@PathVariable Long userId, @PathVariable Long eventId) {
-        log.info("Getting requests by event owner");
+        log.info("Getting requests by event owner id {}", userId);
         return requestService.getRequestsByEventOwner(userId, eventId);
     }
 
@@ -83,7 +83,7 @@ public class PrivateEventController {
     public RequestStatusDto updateRequests(@PathVariable Long userId,
                                            @PathVariable Long eventId,
                                            @RequestBody RequestStatusUpdateDto requestStatusUpdateDto) {
-        log.info("Updating requests by event owner");
+        log.info("Updating requests by event owner id {}", userId);
         return requestService.updateRequests(userId, eventId, requestStatusUpdateDto);
     }
 }
